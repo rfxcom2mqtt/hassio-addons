@@ -1,0 +1,5 @@
+{
+    "name": "Home Assistant Add-on: Rxcom2MQTT",
+    "url": "https://github.com/rfxcom2mqtt/hassio-addons",
+    "maintainer": "sguernion"
+  }

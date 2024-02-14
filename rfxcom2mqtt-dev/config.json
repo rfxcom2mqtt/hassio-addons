@@ -1,0 +1,49 @@
+{
+    "name": "Rfxcom2mqtt Dev",
+    "version": "dev",
+    "slug": "rfxcom2mqtt-dev",
+    "description": "Development build of Rfxcom2mqtt",
+    "uart": true,
+    "url": "https://github.com/rfxcom2mqtt/hassio-addons/tree/master/rfxcom2mqtt-dev",
+    "services": [
+      "mqtt:need"
+    ],
+    "arch": [
+      "amd64",
+      "armhf",
+      "armv7"
+    ],
+    "init": false,
+    "ingress": true,
+    "timeout": 30,
+    "map": [
+      "addon_config:rw"
+    ],
+    "ports": {
+      "8090/tcp": 8090
+
+    },
+    "options": {
+      "data_path": "/config/rfxcom2mqtt",
+      "mqtt": {},
+      "serial": {}
+    },
+    "schema": {
+      "data_path": "str",
+      "mqtt": {
+        "server": "str?",
+        "ca": "str?",
+        "key": "str?",
+        "cert": "str?",
+        "user": "str?",
+        "password": "str?"
+      },
+      "serial": {
+        "port": "str?",
+        "adapter": "str?",
+        "baudrate": "int?",
+        "rtscts": "bool?"
+      }
+    },
+    "image": "rfxcom2mqtt/hassio-addon"
+  }
