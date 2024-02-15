@@ -1,0 +1,42 @@
+name: Builder on Demand
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Type (release/dev/proxy)'
+        default: 'dev'
+        required: true
+
+jobs:
+  check-addon-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      addons: ${{ env.ADDON_LIST }}
+      args: ${{ env.DOCKER_ARGS }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: "ARGS: rfxcom2mqtt-proxy" # Build of addon proxy version
+      if: (github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'proxy')
+      run: |
+        echo "ADDON_LIST=['rfxcom2mqtt-proxy']" >> $GITHUB_ENV
+        echo "DOCKER_ARGS=--no-cache" >> $GITHUB_ENV
+    - name: "ARGS: rfxcom2mqtt-dev" # Build of addon dev version
+      if: (github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'dev')
+      run: |
+        echo "ADDON_LIST=['rfxcom2mqtt-dev']" >> $GITHUB_ENV
+        echo "DOCKER_ARGS=--no-cache" >> $GITHUB_ENV
+    - name: "ARGS: rfxcom2mqtt" # Build of addon release version
+      if: (github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'release')
+      run: |
+        echo "ADDON_LIST=['rfxcom2mqtt']" >> $GITHUB_ENV
+        echo "DOCKER_ARGS=--no-cache --docker-hub-check" >> $GITHUB_ENV
+
+  build:
+    if: ${{ needs.check-addon-changes.outputs.addons != '[]' }}
+    needs: check-addon-changes
+    uses: ./.github/workflows/build.yaml
+    with:
+      addons: "${{ needs.check-addon-changes.outputs.addons }}"
+      arch: "['aarch64','amd64','i386']"  # "armhf", "armv7",
+      args: "${{ needs.check-addon-changes.outputs.args }}"
