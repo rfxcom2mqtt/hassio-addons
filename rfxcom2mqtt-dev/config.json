@@ -5,45 +5,55 @@
     "description": "Development build of Rfxcom2mqtt",
     "uart": true,
     "url": "https://github.com/rfxcom2mqtt/hassio-addons/tree/master/rfxcom2mqtt-dev",
+    "panel_icon": "mdi:signal",
     "services": [
       "mqtt:need"
     ],
     "arch": [
+      "aarch64",
       "amd64",
       "armhf",
-      "armv7"
+      "armv7",
+      "i386"
     ],
     "init": false,
     "ingress": true,
+    "host_network": true,
+    "webui": "http://[HOST]:[PORT:8890]",
     "timeout": 30,
     "map": [
       "addon_config:rw"
     ],
     "ports": {
-      "8090/tcp": 8090
+      "8890/tcp": 8890
 
+    },
+    "ports_description": {
+      "8890/tcp": "Frontend tcp-listen port"
     },
     "options": {
       "data_path": "/config/rfxcom2mqtt",
-      "mqtt": {},
-      "serial": {}
+      "mqtt": {
+        "server": null
+      },
+      "rfxcom": {
+        "usb_device": null
+      }
     },
     "schema": {
       "data_path": "str",
       "mqtt": {
         "server": "str?",
+        "username": "str?",
+        "password": "str?",
         "ca": "str?",
         "key": "str?",
-        "cert": "str?",
-        "user": "str?",
-        "password": "str?"
+        "cert": "str?"
       },
-      "serial": {
-        "port": "str?",
-        "adapter": "str?",
-        "baudrate": "int?",
-        "rtscts": "bool?"
+      "rfxcom": {
+        "usb_device": "str?",
+        "debug": "bool?"
       }
     },
-    "image": "rfxcom2mqtt/hassio-addon"
+    "image": "ghcr.io/rfxcom2mqtt/hassio-addon-{arch}"
   }

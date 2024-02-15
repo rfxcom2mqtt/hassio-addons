@@ -48,15 +48,17 @@ fi
 export RFXCOM2MQTT_DATA="$(bashio::config 'data_path')"
 if ! bashio::fs.file_exists "$RFXCOM2MQTT_DATA/config.yaml"; then
     mkdir -p "$RFXCOM2MQTT_DATA" || bashio::exit.nok "Could not create $RFXCOM2MQTT_DATA"
-
+    bashio::log.info "create config file..."
     cat <<EOF > "$RFXCOM2MQTT_DATA/config.yaml"
 homeassistant:
   discovery: true
+frontend:
+  enabled: true
+  port: 8090
 EOF
 fi
 
 export NODE_PATH=/app/node_modules
-export RFXCOM2MQTT_CONFIG_FRONTEND='{"port": 8091}'
 
 # Expose addon configuration through environment variables.
 function export_config() {
@@ -68,12 +70,16 @@ function export_config() {
     fi
 
     for subkey in $(bashio::jq "$(bashio::config "${key}")" 'keys[]'); do
-        export "RFXCOM2MQTT_CONFIG_$(bashio::string.upper "${key}")_$(bashio::string.upper "${subkey}")=$(bashio::config "${key}.${subkey}")"
+        local envKey=$(bashio::string.upper "${key}")_$(bashio::string.upper "${subkey}")
+        bashio::log.info "export variable env ${envKey}"
+        export "${envKey}=$(bashio::config "${key}.${subkey}")"
     done
 }
-
 export_config 'mqtt'
-export_config 'serial'
+export_config 'rfxcom'
+export FRONTEND_ENABLED="true"
+export FRONTEND_PORT=8099
+bashio::log.info "export variable env FRONTEND_ENABLED FRONTEND_PORT"
 
 if bashio::config.is_empty 'mqtt' && bashio::var.has_value "$(bashio::services 'mqtt')"; then
     if bashio::var.true "$(bashio::services 'mqtt' 'ssl')"; then
@@ -81,7 +87,10 @@ if bashio::config.is_empty 'mqtt' && bashio::var.has_value "$(bashio::services '
     else
         export MQTT_SERVER="mqtt://$(bashio::services 'mqtt' 'host'):$(bashio::services 'mqtt' 'port')"
     fi
-    export MQTT_USER="$(bashio::services 'mqtt' 'username')"
+    bashio::log.info "export variable env MQTT_SERVER"
+    bashio::log.info "export variable env MQTT_PASSWORD"
+    bashio::log.info "export variable env MQTT_USERNAME"
+    export MQTT_USERNAME="$(bashio::services 'mqtt' 'username')"
     export MQTT_PASSWORD="$(bashio::services 'mqtt' 'password')"
 fi
 

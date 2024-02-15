@@ -1,0 +1,68 @@
+name: Builder
+
+env:
+  BUILD_ARGS: "--test"
+  MONITORED_FILES: "README.md build.yaml config.json config.yaml Dockerfile docker-entrypoint.sh"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-addon-changes:
+    runs-on: ubuntu-latest
+    name: Initialize builds
+    outputs:
+      changed_addons: ${{ steps.changed_addons.outputs.addons }}
+      changed: ${{ steps.changed_addons.outputs.changed }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4.1.1
+
+      - name: Get changed files
+        id: changed_files
+        uses: jitterbit/get-changed-files@v1
+
+      - name: Find add-on directories
+        id: addons
+        uses: home-assistant/actions/helpers/find-addons@master
+
+      - name: Get changed add-ons
+        id: changed_addons
+        run: |
+          declare -a changed_addons
+          for addon in ${{ steps.addons.outputs.addons }}; do
+            if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon ]]; then
+              for file in ${{ env.MONITORED_FILES }}; do
+                  if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon/$file ]]; then
+                    if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
+                      changed_addons+=("\"${addon}\",");
+                    fi
+                  fi
+              done
+            fi
+          done
+
+          changed=$(echo ${changed_addons[@]} | rev | cut -c 2- | rev)
+
+          if [[ -n ${changed} ]]; then
+            echo "Changed add-ons: $changed";
+            echo "changed=true" >> $GITHUB_OUTPUT;
+            echo "addons=[$changed]" >> $GITHUB_OUTPUT;
+          else
+            echo "No add-on had any monitored files changed (${{ env.MONITORED_FILES }})";
+          fi
+          echo "${{ env.GITHUB_OUTPUT}}";
+
+  build:
+    if: ${{ needs.check-addon-changes.outputs.addons != '[]' }}
+    needs: check-addon-changes
+    uses: ./.github/workflows/build.yaml
+    with:
+      addons: "${{ needs.check-addon-changes.outputs.changed_addons }}"
+      arch: "['aarch64','amd64','i386']"  # "armhf", "armv7",
+      args: "${{ needs.check-addon-changes.outputs.args }}"
