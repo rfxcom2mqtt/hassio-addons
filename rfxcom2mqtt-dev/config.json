@@ -18,7 +18,9 @@
     ],
     "init": false,
     "ingress": true,
+    "ingress_port": 0,
     "host_network": true,
+    "usb": true,
     "webui": "http://[HOST]:[PORT:8890]",
     "timeout": 30,
     "map": [
