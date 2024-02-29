@@ -18,7 +18,9 @@
     ],
     "init": false,
     "ingress": true,
+    "ingress_port": 0,
     "host_network": true,
+    "usb": true,
     "webui": "http://[HOST]:[PORT:8890]",
     "timeout": 30,
     "map": [
@@ -32,7 +34,7 @@
       "8890/tcp": "Frontend tcp-listen port"
     },
     "options": {
-      "data_path": "/config/rfxcom2mqtt",
+      "public_url": "",
       "mqtt": {
         "server": null
       },
@@ -41,7 +43,7 @@
       }
     },
     "schema": {
-      "data_path": "str",
+      "public_url": "str",
       "mqtt": {
         "server": "str?",
         "username": "str?",
