@@ -5,7 +5,6 @@ bashio::log.info "Preparing to start..."
 # Check if HA supervisor started
 # Workaround for:
 # - https://github.com/home-assistant/supervisor/issues/3884
-bashio::config.require 'data_path'
 
 # Socat
 if bashio::config.true 'socat.enabled'; then
@@ -22,7 +21,7 @@ if bashio::config.true 'socat.enabled'; then
     fi
     bashio::log.info "Starting socat"
 
-    DATA_PATH=$(bashio::config 'data_path')
+    DATA_PATH="./"
     SOCAT_OPTIONS=$(bashio::config 'socat.options')
 
     # Socat start configuration
@@ -45,7 +44,7 @@ else
     bashio::log.info "Socat not enabled"
 fi
 
-export RFXCOM2MQTT_DATA="$(bashio::config 'data_path')"
+export RFXCOM2MQTT_DATA="./"
 if ! bashio::fs.file_exists "$RFXCOM2MQTT_DATA/config.yaml"; then
     mkdir -p "$RFXCOM2MQTT_DATA" || bashio::exit.nok "Could not create $RFXCOM2MQTT_DATA"
     bashio::log.info "create config file..."
@@ -78,8 +77,8 @@ function export_config() {
 export_config 'mqtt'
 export_config 'rfxcom'
 export FRONTEND_ENABLED="true"
-export FRONTEND_PORT=8099
-bashio::log.info "export variable env FRONTEND_ENABLED FRONTEND_PORT"
+export API_PUBLIC_URL=$(bashio::config 'public_url')
+bashio::log.info "export variable env FRONTEND_ENABLED API_PUBLIC_URL"
 
 if bashio::config.is_empty 'mqtt' && bashio::var.has_value "$(bashio::services 'mqtt')"; then
     if bashio::var.true "$(bashio::services 'mqtt' 'ssl')"; then

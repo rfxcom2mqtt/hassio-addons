@@ -35,6 +35,7 @@
     },
     "options": {
       "data_path": "/config/rfxcom2mqtt",
+      "public_url": "",
       "mqtt": {
         "server": null
       },
@@ -44,6 +45,7 @@
     },
     "schema": {
       "data_path": "str",
+      "public_url": "str",
       "mqtt": {
         "server": "str?",
         "username": "str?",
