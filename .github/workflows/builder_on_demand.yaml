@@ -38,5 +38,5 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       addons: "${{ needs.check-addon-changes.outputs.addons }}"
-      arch: "['aarch64','amd64','i386']"  # "armhf", "armv7",
+      arch: "['aarch64','amd64','i386','armv7']"  # "armhf", "armv7",
       args: "${{ needs.check-addon-changes.outputs.args }}"
