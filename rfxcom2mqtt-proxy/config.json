@@ -4,6 +4,7 @@
     "slug": "rfxcom2mqtt_proxy",
     "description": "Proxy for externally running Rfxcom2mqtt",
     "url": "https://github.com/rfxcom2mqtt/hassio-rfxcom2mqtt/tree/master/rfxcom2mqtt-proxy",
+    "startup": "application",
     "arch": [
       "aarch64",
       "amd64",
@@ -11,6 +12,9 @@
       "armv7",
       "i386"
     ],
+    "boot": "auto",
+    "init": false,
+    "ingress": true,
     "webui": "http://[HOST]:[PORT:8890]",
     "timeout": 30,
     "panel_icon": "mdi:signal",

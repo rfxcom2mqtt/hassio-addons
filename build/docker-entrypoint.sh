@@ -53,7 +53,7 @@ homeassistant:
   discovery: true
 frontend:
   enabled: true
-  port: 8890
+  port: 8099
 EOF
 fi
 

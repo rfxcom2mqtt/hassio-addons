@@ -6,6 +6,7 @@
     "uart": true,
     "url": "https://github.com/rfxcom2mqtt/hassio-addons/tree/master/rfxcom2mqtt",
     "panel_icon": "mdi:signal-variant",
+    "startup": "application",
     "services": [
       "mqtt:need"
     ],
@@ -16,18 +17,20 @@
       "armv7",
       "i386"
     ],
+    "boot": "auto",
     "init": false,
-    "webui": "http://[HOST]:[PORT:8890]",
+    "ingress": true,
+    "webui": "http://[HOST]:[PORT:8099]",
     "timeout": 30,
     "map": [
       "addon_config:rw"
     ],
     "ports": {
-      "8890/tcp": 8890
+      "8099/tcp": 8099
 
     },
     "ports_description": {
-      "8890/tcp": "Frontend tcp-listen port"
+      "8099/tcp": "Frontend tcp-listen port"
     },
     "options": {
       "mqtt": {
