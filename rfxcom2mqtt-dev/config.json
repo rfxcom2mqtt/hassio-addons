@@ -38,7 +38,8 @@
       },
       "rfxcom": {
         "usb_device": null
-      }
+      },
+      "public_url": ""
     },
     "schema": {
       "mqtt": {
@@ -52,7 +53,8 @@
       "rfxcom": {
         "usb_device": "str?",
         "debug": "bool?"
-      }
+      },
+      "public_url": "str?"
     },
     "image": "ghcr.io/rfxcom2mqtt/hassio-addon-{arch}"
   }

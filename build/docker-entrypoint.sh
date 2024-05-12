@@ -78,7 +78,8 @@ export_config 'mqtt'
 export_config 'rfxcom'
 export FRONTEND_ENABLED="true"
 export FRONTEND_PORT=8099
-#export API_PUBLIC_URL=$(bashio::config 'public_url')
+export API_PUBLIC_URL=$(bashio::config 'public_url')
+
 bashio::log.info "export variable env FRONTEND_ENABLED FRONTEND_PORT"
 
 if bashio::config.is_empty 'mqtt' && bashio::var.has_value "$(bashio::services 'mqtt')"; then
